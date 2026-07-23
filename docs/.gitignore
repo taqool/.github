@@ -9,3 +9,6 @@
 
 # Temporary build workspace
 build/.latex/
+
+tmp/
+.latex
