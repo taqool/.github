@@ -1,5 +1,4 @@
-## Hi there 👋
-> Speak naturally. Execute accurately.
+# Speak naturally. Execute accurately.
 <!--
 
 **Here are some ideas to get you started:**
