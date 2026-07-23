@@ -6,7 +6,7 @@ param(
   [string]$OutputDir = "build",
 
   [ValidateRange(1, 10)]
-  [int]$Passes = 2
+  [int]$Passes = 3
 )
 
 Set-StrictMode -Version Latest
