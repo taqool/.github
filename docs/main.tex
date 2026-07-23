@@ -1,0 +1,2323 @@
+\documentclass[11pt,a4paper]{article}
+
+% =========================================================
+% COMPILATION
+% =========================================================
+% Compile using XeLaTeX or LuaLaTeX.
+%
+% Recommended:
+%   xelatex voice-workflow-platform.tex
+%   xelatex voice-workflow-platform.tex
+%
+% The second compilation resolves page references.
+
+% =========================================================
+% PACKAGES
+% =========================================================
+\usepackage[a4paper,margin=20mm,headheight=15pt]{geometry}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{ragged2e}
+
+\usetikzlibrary{
+arrows.meta,
+positioning,
+fit,
+calc,
+shapes.geometric,
+backgrounds
+}
+
+% =========================================================
+% LANGUAGES AND FONTS
+% =========================================================
+\setdefaultlanguage{english}
+\setotherlanguage{arabic}
+
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Latin Modern Mono}
+
+% Arabic font fallback strategy.
+\IfFontExistsTF{IBM Plex Sans Arabic}{
+\newfontfamily\arabicfont[
+Script=Arabic,
+Scale=1.05
+]{IBM Plex Sans Arabic}
+}{
+\IfFontExistsTF{Noto Sans Arabic}{
+\newfontfamily\arabicfont[
+Script=Arabic,
+Scale=1.05
+]{Noto Sans Arabic}
+}{
+\newfontfamily\arabicfont[
+Script=Arabic,
+Scale=1.05
+]{Amiri}
+}
+}
+
+% =========================================================
+% DOCUMENT METADATA
+% =========================================================
+\newcommand{\ProjectName}{Enterprise Real-Time Voice-to-Workflow Platform}
+\newcommand{\ProjectShortName}{Voice Workflow Runtime}
+\newcommand{\DocumentVersion}{1.0}
+\newcommand{\DocumentDate}{\today}
+\newcommand{\PreparedFor}{Product, Engineering, AI, Security, and Operations Teams}
+
+% =========================================================
+% COLORS
+% =========================================================
+\definecolor{Primary}{HTML}{17324D}
+\definecolor{PrimaryLight}{HTML}{EAF0F5}
+\definecolor{Secondary}{HTML}{2D6A6A}
+\definecolor{Accent}{HTML}{B88927}
+\definecolor{Success}{HTML}{2E7D5B}
+\definecolor{Warning}{HTML}{A66700}
+\definecolor{Danger}{HTML}{A93A3A}
+\definecolor{TextDark}{HTML}{17212B}
+\definecolor{TextMuted}{HTML}{5F6B76}
+\definecolor{Border}{HTML}{D7DEE5}
+\definecolor{Surface}{HTML}{F7F9FB}
+\definecolor{CodeBackground}{HTML}{F4F6F8}
+
+% =========================================================
+% PDF AND LINKS
+% =========================================================
+\hypersetup{
+pdftitle={\ProjectName},
+pdfauthor={Project Team},
+pdfsubject={Product and Technical Architecture Specification},
+colorlinks=true,
+linkcolor=Primary,
+urlcolor=Secondary,
+citecolor=Primary
+}
+
+% =========================================================
+% HEADER AND FOOTER
+% =========================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\sffamily\small\ProjectShortName}
+\fancyhead[R]{\sffamily\small Version \DocumentVersion}
+\fancyfoot[L]{\sffamily\footnotesize Confidential --- Internal Use}
+\fancyfoot[R]{\sffamily\footnotesize Page \thepage\ of \pageref{LastPage}}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% =========================================================
+% SECTION STYLING
+% =========================================================
+\titleformat{\section}
+{\Large\sffamily\bfseries\color{Primary}}
+{\thesection}
+{0.7em}
+{}
+
+\titleformat{\subsection}
+{\large\sffamily\bfseries\color{Primary}}
+{\thesubsection}
+{0.7em}
+{}
+
+\titleformat{\subsubsection}
+{\normalsize\sffamily\bfseries\color{Secondary}}
+{\thesubsubsection}
+{0.7em}
+{}
+
+\titlespacing*{\section}{0pt}{22pt}{10pt}
+\titlespacing*{\subsection}{0pt}{17pt}{7pt}
+\titlespacing*{\subsubsection}{0pt}{13pt}{5pt}
+
+% =========================================================
+% TABLE HELPERS
+% =========================================================
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\renewcommand{\arraystretch}{1.25}
+
+% =========================================================
+% LIST STYLING
+% =========================================================
+\setlist[itemize]{
+leftmargin=1.5em,
+itemsep=3pt,
+topsep=4pt
+}
+
+\setlist[enumerate]{
+leftmargin=1.7em,
+itemsep=3pt,
+topsep=4pt
+}
+
+% =========================================================
+% CODE LISTINGS
+% =========================================================
+\lstdefinestyle{projectcode}{
+backgroundcolor=\color{CodeBackground},
+basicstyle=\ttfamily\footnotesize,
+keywordstyle=\bfseries\color{Primary},
+stringstyle=\color{Success},
+commentstyle=\itshape\color{TextMuted},
+numberstyle=\tiny\color{TextMuted},
+numbers=left,
+numbersep=8pt,
+frame=single,
+rulecolor=\color{Border},
+breaklines=true,
+breakatwhitespace=false,
+showstringspaces=false,
+keepspaces=true,
+columns=fullflexible,
+tabsize=2,
+xleftmargin=3pt,
+xrightmargin=3pt,
+aboveskip=8pt,
+belowskip=8pt
+}
+
+\lstset{style=projectcode}
+
+% =========================================================
+% BOXES
+% =========================================================
+\newtcolorbox{executivebox}{
+enhanced,
+breakable,
+colback=PrimaryLight,
+colframe=Primary,
+boxrule=0.8pt,
+arc=2mm,
+left=4mm,
+right=4mm,
+top=3mm,
+bottom=3mm,
+fonttitle=\sffamily\bfseries,
+title=Executive Summary
+}
+
+\newtcolorbox{decisionbox}[1][]{
+enhanced,
+breakable,
+colback=Surface,
+colframe=Secondary,
+boxrule=0.7pt,
+arc=2mm,
+left=4mm,
+right=4mm,
+top=3mm,
+bottom=3mm,
+fonttitle=\sffamily\bfseries,
+title={#1}
+}
+
+\newtcolorbox{warningbox}[1][]{
+enhanced,
+breakable,
+colback=Warning!8,
+colframe=Warning,
+boxrule=0.7pt,
+arc=2mm,
+left=4mm,
+right=4mm,
+top=3mm,
+bottom=3mm,
+fonttitle=\sffamily\bfseries,
+title={#1}
+}
+
+\newtcolorbox{securitybox}[1][]{
+enhanced,
+breakable,
+colback=Danger!5,
+colframe=Danger,
+boxrule=0.7pt,
+arc=2mm,
+left=4mm,
+right=4mm,
+top=3mm,
+bottom=3mm,
+fonttitle=\sffamily\bfseries,
+title={#1}
+}
+
+% =========================================================
+% TIKZ STYLES
+% =========================================================
+\tikzset{
+component/.style={
+rectangle,
+rounded corners=2mm,
+minimum width=30mm,
+minimum height=11mm,
+align=center,
+draw=Primary,
+fill=PrimaryLight,
+font=\sffamily\small
+},
+service/.style={
+rectangle,
+rounded corners=2mm,
+minimum width=31mm,
+minimum height=12mm,
+align=center,
+draw=Secondary,
+fill=Secondary!8,
+font=\sffamily\small
+},
+storage/.style={
+cylinder,
+shape border rotate=90,
+aspect=0.22,
+minimum width=23mm,
+minimum height=13mm,
+align=center,
+draw=Accent,
+fill=Accent!10,
+font=\sffamily\small
+},
+flow/.style={
+-{Latex[length=2.2mm]},
+thick,
+draw=TextMuted
+},
+asyncflow/.style={
+-{Latex[length=2.2mm]},
+thick,
+dashed,
+draw=TextMuted
+}
+}
+
+% =========================================================
+% DOCUMENT
+% =========================================================
+\begin{document}
+
+% =========================================================
+% TITLE PAGE
+% =========================================================
+\begin{titlepage}
+\thispagestyle{empty}
+
+\vspace*{16mm}
+
+{\sffamily\Large\color{Secondary}
+PRODUCT AND TECHNICAL ARCHITECTURE
+}
+
+\vspace{8mm}
+
+{\sffamily\bfseries\fontsize{27}{33}\selectfont\color{Primary}
+\ProjectName
+}
+
+\vspace{5mm}
+
+{\Large\color{TextMuted}
+A configurable enterprise platform that converts live Arabic speech
+into validated, secure, executable business workflows.
+}
+
+\vspace{14mm}
+
+\begin{tcolorbox}[
+colback=Surface,
+colframe=Border,
+boxrule=0.6pt,
+arc=2mm,
+left=5mm,
+right=5mm,
+top=4mm,
+bottom=4mm
+]
+\begin{tabularx}{\textwidth}{L{37mm}Y}
+\textbf{Document Version} & \DocumentVersion \
+\textbf{Prepared For} & \PreparedFor \
+\textbf{Document Date} & \DocumentDate \
+\textbf{Status} & Initial architecture and product definition \
+\textbf{Classification} & Confidential --- Internal Use \
+\end{tabularx}
+\end{tcolorbox}
+
+\vfill
+
+\begin{center}
+{\sffamily\small\color{TextMuted}
+This document defines the product vision, system boundaries,
+real-time architecture, security model, API contracts,
+delivery roadmap, and acceptance criteria.
+}
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% =========================================================
+\section{Executive Summary}
+
+\begin{executivebox}
+\ProjectName{} is a multi-tenant enterprise platform that allows each
+organization to define its own business workflows, data schemas,
+terminology, validation rules, permissions, and integration targets.
+
+An employee can speak naturally in Arabic or Egyptian Arabic while the
+platform processes the speech as a real-time stream. The system produces
+a continuously updated structured workflow draft, validates it against
+the organization's configuration, asks for missing information when
+necessary, and executes the final action only after the configured
+confirmation and approval requirements are satisfied.
+
+The platform is not only a speech-to-text service and is not a generic
+large-language-model wrapper. Its primary value is the combination of:
+
+\begin{itemize}
+\item Real-time streaming speech processing.
+\item Tenant-defined JSON schemas and workflow definitions.
+\item Incremental structured-data extraction.
+\item Deterministic business validation.
+\item Enterprise identity and permission enforcement.
+\item Secure workflow execution.
+\item Webhooks, APIs, queues, and n8n integrations.
+\item Auditing, replay, observability, and quality evaluation.
+\end{itemize}
+\end{executivebox}
+
+% =========================================================
+\section{Problem Definition}
+
+Operational employees frequently communicate business events using voice
+because typing structured forms is slow, inconvenient, or impractical in
+field environments.
+
+Examples include:
+
+\begin{itemize}
+\item Drivers recording sales, purchases, collections, or expenses.
+\item Warehouse employees recording stock movements.
+\item Sales representatives recording customer orders.
+\item Maintenance teams recording incidents and completed work.
+\item Recruitment teams updating candidate or worker states.
+\item Healthcare and service teams recording operational notes.
+\end{itemize}
+
+A typical spoken statement may contain multiple entities, calculations,
+corrections, and business decisions.
+
+For example:
+
+\begin{quote}
+\textarabic{
+اشتريت من شركة النور ثلاثة طن أرز، الطن بأربعة وعشرين ألف،
+ودفعت ثلاثين ألف كاش، والباقي آجل، والنقل ألف ومائتين جنيه.
+}
+\end{quote}
+
+Traditional speech-to-text systems return plain text. They do not reliably
+determine:
+
+\begin{itemize}
+\item Which business workflow the employee intends to execute.
+\item Which fields belong to the workflow.
+\item Whether the values comply with company rules.
+\item Whether referenced suppliers, customers, products, or accounts exist.
+\item Whether the employee is authorized to perform the action.
+\item Whether confirmation or approval is required.
+\item Which external application should receive the final result.
+\end{itemize}
+
+% =========================================================
+\section{Product Vision}
+
+\subsection{Vision Statement}
+
+\begin{decisionbox}[Product Vision]
+Provide enterprises with a configurable runtime that converts natural
+spoken language into validated business actions without requiring each
+organization to build its own speech, AI, workflow, security, and
+integration infrastructure.
+\end{decisionbox}
+
+\subsection{Product Positioning}
+
+The platform should be positioned as:
+
+\begin{quote}
+\textbf{Enterprise Real-Time Voice Workflow Infrastructure}
+\end{quote}
+
+It should not be positioned as:
+
+\begin{itemize}
+\item A generic transcription tool.
+\item A chatbot builder.
+\item A fixed accounting application.
+\item A general-purpose automation platform.
+\item An unvalidated AI action executor.
+\end{itemize}
+
+\subsection{Core Differentiation}
+
+The platform's competitive advantage is the combination of:
+
+\begin{enumerate}
+\item Streaming voice processing with low perceived latency.
+\item Configurable enterprise workflows.
+\item Constrained JSON output.
+\item Deterministic validation and entity resolution.
+\item Secure and auditable execution.
+\item Arabic and Egyptian Arabic operational language support.
+\end{enumerate}
+
+% =========================================================
+\section{Target Customers and Use Cases}
+
+\subsection{Primary Customer Segments}
+
+\begin{tabularx}{\textwidth}{L{36mm}Y Y}
+\toprule
+\textbf{Segment} & \textbf{Operational Need} & \textbf{Example Workflows} \
+\midrule
+Distribution companies
+& Fast field data capture
+& Sales, collections, expenses, stock transfer \
+
+Agricultural companies
+& Field and warehouse operations
+& Purchase, delivery, batch movement, inspection \
+
+Logistics companies
+& Driver and shipment reporting
+& Delivery, incident, fuel expense, cash collection \
+
+ERP and accounting vendors
+& Voice-enabled transaction entry
+& Purchase, sale, payment, receipt, journal draft \
+
+Maintenance companies
+& Hands-free field reporting
+& Work order, incident, parts used, completion report \
+
+Recruitment agencies
+& Worker and candidate workflow updates
+& Candidate status, document collection, assignment \
+
+Healthcare operations
+& Structured operational recording
+& Visit notes, inventory usage, service completion \
+\bottomrule
+\end{tabularx}
+
+\subsection{Primary Personas}
+
+\begin{itemize}
+\item \textbf{Enterprise Administrator:}
+defines workflows, schemas, rules, integrations, and access policies.
+
+\item \textbf{Operational Employee:}
+speaks naturally and reviews the generated structured action.
+
+\item \textbf{Supervisor or Approver:}
+reviews high-risk actions before execution.
+
+\item \textbf{Integration Engineer:}
+connects the platform to internal systems, APIs, and n8n.
+
+\item \textbf{Security Administrator:}
+manages identity, keys, retention, access controls, and audit policies.
+
+\item \textbf{Quality Analyst:}
+reviews extraction quality, failed sessions, corrections, and model metrics.
+\end{itemize}
+
+% =========================================================
+\section{Core Product Concepts}
+
+\subsection{Tenant}
+
+A tenant represents one customer organization. All workflow definitions,
+data, credentials, logs, terminology, and integrations are isolated by
+tenant.
+
+\subsection{Workflow Definition}
+
+A workflow definition describes a business operation such as:
+
+\begin{itemize}
+\item Purchase
+\item Sale
+\item Income
+\item Expense
+\item Receipt
+\item Payment
+\item Stock transfer
+\item Maintenance request
+\item Candidate status update
+\end{itemize}
+
+Each workflow contains:
+
+\begin{itemize}
+\item Unique key and display name.
+\item Business description.
+\item JSON Schema.
+\item Required and optional fields.
+\item Trigger phrases and terminology.
+\item Examples.
+\item Validation rules.
+\item Entity-resolution rules.
+\item Permission requirements.
+\item Execution policy.
+\item Integration destination.
+\item Version.
+\end{itemize}
+
+\subsection{Voice Session}
+
+A voice session represents one continuous employee interaction. It stores:
+
+\begin{itemize}
+\item Tenant and user identity.
+\item Audio stream metadata.
+\item Transcript revisions.
+\item Workflow candidates.
+\item Current structured draft.
+\item Missing fields.
+\item Validation results.
+\item Confirmation state.
+\item Final execution result.
+\end{itemize}
+
+\subsection{Workflow Draft}
+
+A workflow draft is an incomplete or complete structured representation
+of the employee's spoken intent.
+
+It is mutable while the employee is speaking and immutable after final
+commit.
+
+\subsection{Execution Policy}
+
+The execution policy controls what must happen before the platform sends
+or executes the final workflow.
+
+Supported modes should include:
+
+\begin{itemize}
+\item Automatic execution.
+\item User confirmation.
+\item PIN or biometric confirmation.
+\item Supervisor approval.
+\item Dual approval.
+\item Draft creation only.
+\end{itemize}
+
+% =========================================================
+\section{End-to-End User Experience}
+
+\subsection{Administrator Experience}
+
+The enterprise administrator opens the dashboard and performs the
+following process:
+
+\begin{enumerate}
+\item Creates a new workflow.
+\item Defines its name, description, and business purpose.
+\item Creates or imports its JSON Schema.
+\item Marks required and optional fields.
+\item Adds example phrases.
+\item Defines company-specific synonyms.
+\item Adds validation rules.
+\item Configures database or API entity resolution.
+\item Assigns roles and permissions.
+\item Selects an execution policy.
+\item Connects a webhook, API, queue, or n8n workflow.
+\item Tests the workflow in a voice playground.
+\item Publishes a version for production use.
+\end{enumerate}
+
+\subsection{Employee Experience}
+
+The operational employee:
+
+\begin{enumerate}
+\item Opens the voice-enabled application.
+\item Starts a secure voice session.
+\item Speaks naturally.
+\item Sees an immediate partial transcript.
+\item Sees a structured draft update while speaking.
+\item Corrects information naturally when necessary.
+\item Provides missing information when asked.
+\item Reviews the final structured result.
+\item Confirms the action.
+\item Receives a success, rejection, or approval-pending result.
+\end{enumerate}
+
+\subsection{Example Interaction}
+
+The employee says:
+
+\begin{quote}
+\textarabic{
+بعت للعميل أحمد ثلاثة طن أرز، الطن باثنين وعشرين ألف،
+واستلمت منه عشرة آلاف كاش، والباقي آجل.
+}
+\end{quote}
+
+The platform incrementally identifies:
+
+\begin{itemize}
+\item Workflow: Sale
+\item Customer: Ahmed
+\item Product: Rice
+\item Quantity: 3
+\item Unit: Ton
+\item Unit price: 22,000
+\item Paid amount: 10,000
+\item Remaining amount: 56,000
+\item Payment status: Partial
+\end{itemize}
+
+% =========================================================
+\section{Workflow Lifecycle}
+
+The workflow session follows a controlled lifecycle.
+
+\begin{center}
+\begin{tikzpicture}[
+node distance=8mm and 6mm,
+every node/.style={font=\sffamily\small}
+]
+\node[component] (listening) {LISTENING};
+\node[component, right=of listening] (draft) {DRAFT};
+\node[component, right=of draft] (ready) {READY};
+\node[component, right=of ready] (confirmed) {CONFIRMED};
+\node[component, right=of confirmed] (committed) {COMMITTED};
+
+\draw[flow] (listening) -- (draft);
+\draw[flow] (draft) -- (ready);
+\draw[flow] (ready) -- (confirmed);
+\draw[flow] (confirmed) -- (committed);
+
+\node[component, below=12mm of ready, draw=Danger, fill=Danger!6] (rejected)
+{REJECTED};
+
+\draw[flow, draw=Danger] (draft) -- (rejected);
+\draw[flow, draw=Danger] (ready) -- (rejected);
+\draw[flow, draw=Danger] (confirmed) -- (rejected);
+\end{tikzpicture}
+\end{center}
+
+\begin{tabularx}{\textwidth}{L{30mm}Y}
+\toprule
+\textbf{State} & \textbf{Meaning} \
+\midrule
+LISTENING
+& Audio is being received and transcribed. \
+
+DRAFT
+& The platform has identified a possible workflow and partial fields. \
+
+READY
+& Required information is complete and deterministic validation has passed. \
+
+CONFIRMED
+& The user or approver has confirmed execution. \
+
+COMMITTED
+& The final action has been delivered or executed successfully. \
+
+REJECTED
+& The action was rejected due to validation, authorization, approval, or integration failure. \
+\bottomrule
+\end{tabularx}
+
+\begin{warningbox}[Critical Execution Rule]
+Partial transcripts and draft updates must never directly trigger
+irreversible business actions.
+
+Only a confirmed and validated final workflow may reach the execution
+dispatcher.
+\end{warningbox}
+
+% =========================================================
+\section{Real-Time Processing Architecture}
+
+\subsection{High-Level Architecture}
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}[
+node distance=10mm and 13mm
+]
+\node[component] (client) {Mobile or Web\Client};
+
+\node[service, right=of client] (gateway)
+{Realtime\Gateway};
+
+\node[service, right=of gateway] (speech)
+{Streaming Speech\Service};
+
+\node[service, right=of speech] (runtime)
+{Workflow\Runtime};
+
+\node[service, right=of runtime] (validation)
+{Validation and\Entity Resolution};
+
+\node[service, right=of validation] (dispatcher)
+{Action\Dispatcher};
+
+\node[storage, below=19mm of gateway] (redis)
+{Redis};
+
+\node[storage, below=19mm of runtime] (postgres)
+{PostgreSQL};
+
+\node[service, below=19mm of validation] (queue)
+{Event Queue};
+
+\node[service, below=19mm of dispatcher] (webhook)
+{Webhook and\Integration Workers};
+
+\draw[flow] (client) -- node[above, font=\scriptsize]{Audio / events} (gateway);
+\draw[flow] (gateway) -- (speech);
+\draw[flow] (speech) -- node[above, font=\scriptsize]{Partial transcript} (runtime);
+\draw[flow] (runtime) -- (validation);
+\draw[flow] (validation) -- node[above, font=\scriptsize]{Validated action} (dispatcher);
+
+\draw[flow] (gateway) -- (redis);
+\draw[flow] (runtime) -- (postgres);
+
+\draw[asyncflow] (validation) -- (queue);
+\draw[asyncflow] (dispatcher) -- (webhook);
+\draw[asyncflow] (queue) -- (webhook);
+
+\draw[flow, bend left=32] (runtime.north) to
+node[above, font=\scriptsize]{Draft updates} (gateway.north);
+
+\draw[flow, bend left=36] (gateway.north) to
+node[above, font=\scriptsize]{Realtime UI events} (client.north);
+\end{tikzpicture}
+}
+\caption{High-level real-time and asynchronous processing architecture.}
+\end{figure}
+
+\subsection{Realtime Gateway}
+
+The Realtime Gateway is responsible for:
+
+\begin{itemize}
+\item WebSocket or WebRTC session management.
+\item Authentication and tenant resolution.
+\item Audio chunk sequencing.
+\item Backpressure and connection health.
+\item Reconnection and session recovery.
+\item Rate limiting and abuse prevention.
+\item Routing sessions to speech-processing workers.
+\item Returning transcript and workflow events to the client.
+\end{itemize}
+
+The gateway should remain stateless where possible. Hot session state
+should be stored in Redis.
+
+\subsection{Streaming Speech Service}
+
+The speech service is responsible for:
+
+\begin{itemize}
+\item Audio format validation.
+\item Voice activity detection.
+\item Noise and silence handling.
+\item Streaming speech-to-text.
+\item Partial transcript generation.
+\item Final transcript generation.
+\item Transcript stability scoring.
+\item Arabic number normalization.
+\item Egyptian Arabic terminology normalization.
+\end{itemize}
+
+\subsection{Workflow Runtime}
+
+The Workflow Runtime is responsible for:
+
+\begin{itemize}
+\item Loading tenant workflow definitions.
+\item Selecting workflow candidates.
+\item Extracting structured fields.
+\item Updating the current draft.
+\item Handling corrections and revisions.
+\item Tracking source spans and confidence.
+\item Identifying missing required fields.
+\item Deciding when deeper model reasoning is required.
+\end{itemize}
+
+\subsection{Validation and Entity Resolution}
+
+This service provides deterministic validation after AI extraction.
+
+It validates:
+
+\begin{itemize}
+\item JSON Schema compliance.
+\item Required fields.
+\item Numeric ranges.
+\item Cross-field business rules.
+\item Entity existence.
+\item User permissions.
+\item Tenant restrictions.
+\item Duplicate-action risks.
+\item Accounting and inventory constraints.
+\end{itemize}
+
+\subsection{Action Dispatcher}
+
+The Action Dispatcher executes only finalized workflows.
+
+Supported delivery mechanisms should include:
+
+\begin{itemize}
+\item Signed webhook delivery.
+\item REST API invocation.
+\item Message queue publication.
+\item n8n webhook trigger.
+\item Internal connector invocation.
+\item Draft-only persistence.
+\end{itemize}
+
+% =========================================================
+\section{Low-Latency Processing Strategy}
+
+\subsection{Fast Layer and Reasoning Layer}
+
+The system should not send every partial word to a large language model.
+
+Instead, it should use two layers.
+
+\subsubsection{Fast Layer}
+
+The fast layer runs continuously and performs:
+
+\begin{itemize}
+\item Partial transcription.
+\item Number normalization.
+\item Keyword recognition.
+\item Basic entity extraction.
+\item Candidate workflow detection.
+\item Session state updates.
+\end{itemize}
+
+\subsubsection{Reasoning Layer}
+
+The reasoning layer runs at semantic checkpoints, including:
+
+\begin{itemize}
+\item A stable phrase or sentence boundary.
+\item A short period of silence.
+\item Detection of a new business entity.
+\item Detection of a correction.
+\item Completion of required workflow information.
+\item Ambiguity requiring structured reasoning.
+\item Final end-of-speech processing.
+\end{itemize}
+
+\subsection{Target Latency Budget}
+
+\begin{tabularx}{\textwidth}{Y L{34mm} Y}
+\toprule
+\textbf{Stage} & \textbf{Target} & \textbf{User-Visible Result} \
+\midrule
+Audio chunk upload
+& 20--100 ms
+& Continuous connection \
+
+Partial speech recognition
+& 100--300 ms
+& Live transcript \
+
+Fast entity extraction
+& 10--60 ms
+& Immediate field updates \
+
+Draft UI update
+& Below 100 ms
+& Responsive structured form \
+
+Structured model reasoning
+& 200--900 ms
+& Corrected workflow draft \
+
+Final deterministic validation
+& 20--250 ms
+& Ready or validation-error state \
+\bottomrule
+\end{tabularx}
+
+These figures are architectural targets and should be verified through
+load testing against the selected speech and language models.
+
+% =========================================================
+\section{Workflow Configuration Model}
+
+\subsection{Example Workflow Definition}
+
+\begin{lstlisting}[language={},caption={Example tenant workflow definition}]
+{
+"key": "purchase",
+"version": 3,
+"name": "Purchase",
+"description": "Record the purchase of goods from a supplier",
+"status": "published",
+
+"triggerPhrases": [
+"I purchased",
+"we bought",
+"goods received from supplier"
+],
+
+"schema": {
+"type": "object",
+"required": ["supplierId", "items"],
+"properties": {
+"supplierId": {
+"type": "string"
+},
+"items": {
+"type": "array",
+"minItems": 1,
+"items": {
+"type": "object",
+"required": [
+"productId",
+"quantity",
+"unitId",
+"unitPrice"
+],
+"properties": {
+"productId": {
+"type": "string"
+},
+"quantity": {
+"type": "number",
+"exclusiveMinimum": 0
+},
+"unitId": {
+"type": "string"
+},
+"unitPrice": {
+"type": "number",
+"minimum": 0
+}
+}
+}
+},
+"paidAmount": {
+"type": "number",
+"minimum": 0
+},
+"paymentMethod": {
+"type": "string",
+"enum": ["cash", "bank", "credit"]
+},
+"expenses": {
+"type": "array"
+}
+}
+},
+
+"rules": [
+{
+"key": "payment_not_above_total",
+"expression": "paidAmount <= invoiceTotal",
+"severity": "error"
+}
+],
+
+"executionPolicy": {
+"mode": "confirm",
+"requiresPin": false,
+"requiresSupervisorApproval": false
+},
+
+"integration": {
+"type": "webhook",
+"destinationId": "dest_01KEXAMPLE"
+}
+}
+\end{lstlisting}
+
+\subsection{Workflow Versioning}
+
+Workflow definitions must be versioned.
+
+Publishing a new version must not alter historical sessions created using
+older versions.
+
+Each session must store:
+
+\begin{itemize}
+\item Workflow definition ID.
+\item Workflow version.
+\item Model configuration version.
+\item Validation-rules version.
+\item Integration-destination version.
+\end{itemize}
+
+\subsection{Schema Builder}
+
+The dashboard should provide both:
+
+\begin{itemize}
+\item A visual schema builder for non-technical administrators.
+\item An advanced JSON Schema editor for engineers.
+\end{itemize}
+
+The visual builder should support:
+
+\begin{itemize}
+\item Text, number, boolean, date, enum, object, and array fields.
+\item Required and optional fields.
+\item Default values.
+\item Numeric limits.
+\item String patterns.
+\item Field descriptions.
+\item Entity-reference fields.
+\item Conditional fields.
+\item Repeatable line items.
+\end{itemize}
+
+% =========================================================
+\section{Realtime Protocol}
+
+\subsection{Connection Establishment}
+
+The client creates a session using a standard authenticated API request,
+then opens a realtime connection.
+
+\begin{lstlisting}[language={},caption={Create a voice session}]
+POST /v1/realtime/sessions
+
+{
+"locale": "ar-EG",
+"allowedWorkflowKeys": [
+"purchase",
+"sale",
+"expense",
+"income"
+],
+"audio": {
+"format": "pcm16",
+"sampleRate": 16000,
+"channels": 1
+}
+}
+\end{lstlisting}
+
+\subsection{Client Audio Event}
+
+Binary frames are preferred for audio payloads to avoid Base64 overhead.
+
+A corresponding metadata event may use the following structure:
+
+\begin{lstlisting}[language={},caption={Audio chunk metadata event}]
+{
+"type": "audio.chunk",
+"sequence": 142,
+"durationMs": 100,
+"timestamp": "2026-07-23T18:30:11.420Z"
+}
+\end{lstlisting}
+
+\subsection{Partial Transcript Event}
+
+\begin{lstlisting}[language={},caption={Partial transcript event}]
+{
+"type": "transcript.partial",
+"sessionId": "vs_01KEXAMPLE",
+"revision": 12,
+"text": "I purchased three tons of rice",
+"isStable": false,
+"confidence": 0.82
+}
+\end{lstlisting}
+
+\subsection{Workflow Draft Update}
+
+\begin{lstlisting}[language={},caption={Incremental workflow draft update}]
+{
+"type": "workflow.draft.updated",
+"sessionId": "vs_01KEXAMPLE",
+"revision": 7,
+"workflow": {
+"key": "purchase",
+"state": "selected",
+"confidence": 0.91
+},
+"data": {
+"supplierId": "supplier_102",
+"items": [
+{
+"productId": "product_rice_01",
+"quantity": 3,
+"unitId": "ton"
+}
+]
+},
+"missingFields": [
+{
+"path": "items[0].unitPrice",
+"reason": "required"
+}
+]
+}
+\end{lstlisting}
+
+\subsection{Final Workflow Event}
+
+\begin{lstlisting}[language={},caption={Workflow ready for confirmation}]
+{
+"type": "workflow.ready",
+"sessionId": "vs_01KEXAMPLE",
+"revision": 14,
+"workflowKey": "purchase",
+"data": {
+"supplierId": "supplier_102",
+"items": [
+{
+"productId": "product_rice_01",
+"quantity": 3,
+"unitId": "ton",
+"unitPrice": 24000,
+"lineTotal": 72000
+}
+],
+"paidAmount": 30000,
+"remainingAmount": 42000,
+"paymentMethod": "cash"
+},
+"validation": {
+"valid": true,
+"errors": [],
+"warnings": []
+},
+"confirmationRequired": true
+}
+\end{lstlisting}
+
+% =========================================================
+\section{Corrections and Transcript Revisions}
+
+Employees frequently correct themselves while speaking.
+
+Example:
+
+\begin{quote}
+\textarabic{
+بعت خمسة طن... لا، ثلاثة طن.
+}
+\end{quote}
+
+The system must support revision-based updates rather than append-only
+transcription.
+
+\begin{lstlisting}[language={},caption={Transcript correction event}]
+{
+"type": "transcript.revision",
+"revision": 18,
+"replacement": {
+"startToken": 4,
+"endToken": 6,
+"oldText": "five tons",
+"newText": "three tons"
+}
+}
+\end{lstlisting}
+
+The Workflow Runtime should then update the affected field.
+
+\begin{lstlisting}[language={},caption={Structured field correction}]
+{
+"type": "workflow.field.corrected",
+"revision": 9,
+"path": "items[0].quantity",
+"oldValue": 5,
+"newValue": 3,
+"reason": "user_correction",
+"confidence": 0.96
+}
+\end{lstlisting}
+
+Each extracted field should retain provenance metadata:
+
+\begin{itemize}
+\item Transcript source range.
+\item Transcript revision.
+\item Extraction method.
+\item Confidence.
+\item Last updated timestamp.
+\item Whether the value was user-confirmed.
+\end{itemize}
+
+% =========================================================
+\section{Entity Resolution}
+
+The platform should not assume that extracted names represent valid
+business entities.
+
+For example, ``Ahmed'' may match multiple customers.
+
+Entity resolution should support:
+
+\begin{itemize}
+\item Exact matching.
+\item Alias matching.
+\item Phonetic matching.
+\item Fuzzy text matching.
+\item Recent-entity prioritization.
+\item User-assigned entity scope.
+\item External API lookup.
+\item Human clarification.
+\end{itemize}
+
+When multiple entities are possible, the system should return candidates
+instead of silently selecting one.
+
+\begin{lstlisting}[language={},caption={Entity ambiguity event}]
+{
+"type": "workflow.clarification.required",
+"field": "customerId",
+"question": "Which Ahmed customer do you mean?",
+"candidates": [
+{
+"id": "customer_11",
+"label": "Ahmed Hassan - Cairo",
+"confidence": 0.78
+},
+{
+"id": "customer_42",
+"label": "Ahmed Ali - Tanta",
+"confidence": 0.72
+}
+]
+}
+\end{lstlisting}
+
+% =========================================================
+\section{Validation Model}
+
+\subsection{Validation Layers}
+
+Validation should occur through multiple layers.
+
+\begin{enumerate}
+\item \textbf{Schema Validation}
+
+Confirms that the output structure and field types match the published
+JSON Schema.
+
+\item \textbf{Business Rule Validation}
+
+Evaluates rules such as payment limits, quantity limits, account state,
+and workflow-specific constraints.
+
+\item \textbf{Entity Validation}
+
+Confirms that referenced customers, suppliers, products, warehouses,
+and accounts exist and are active.
+
+\item \textbf{Authorization Validation}
+
+Confirms that the authenticated employee may create, confirm, approve,
+or execute the workflow.
+
+\item \textbf{Risk Validation}
+
+Detects duplicate actions, unusual values, policy violations, or actions
+requiring additional approval.
+
+\item \textbf{Integration Validation}
+
+Confirms that the destination configuration is active and compatible
+with the final payload version.
+\end{enumerate}
+
+\subsection{Validation Error Structure}
+
+\begin{lstlisting}[language={},caption={Structured validation error}]
+{
+"valid": false,
+"errors": [
+{
+"code": "PAID_AMOUNT_EXCEEDS_TOTAL",
+"path": "paidAmount",
+"message": "Paid amount cannot exceed the invoice total",
+"severity": "error",
+"source": "business_rule"
+}
+],
+"warnings": []
+}
+\end{lstlisting}
+
+% =========================================================
+\section{Security Architecture}
+
+\begin{securitybox}[Security Principle]
+The language model must never be treated as an authorization system,
+validation authority, or trusted execution engine.
+\end{securitybox}
+
+\subsection{Identity and Access Management}
+
+The platform should support:
+
+\begin{itemize}
+\item OpenID Connect and SAML for enterprise identity.
+\item JWT access tokens with short expiration.
+\item Refresh-token rotation.
+\item Multi-factor authentication.
+\item Role-based access control.
+\item Attribute-based policies for sensitive operations.
+\item Device registration and revocation.
+\item Service accounts for integrations.
+\end{itemize}
+
+\subsection{Tenant Isolation}
+
+Tenant isolation must be enforced at:
+
+\begin{itemize}
+\item API authorization.
+\item Database queries.
+\item Redis keys.
+\item Queue messages.
+\item Object-storage paths.
+\item Encryption context.
+\item Metrics and logs.
+\item Model prompts and context.
+\end{itemize}
+
+Every internal request should include a verified tenant context. Tenant
+identifiers received from clients must not be trusted without
+authentication and authorization.
+
+\subsection{Data Protection}
+
+The system should implement:
+
+\begin{itemize}
+\item TLS for all external and internal traffic.
+\item Encryption at rest.
+\item Tenant-specific encryption keys for enterprise plans.
+\item Secret management outside application code.
+\item Configurable audio-retention policies.
+\item Transcript redaction.
+\item Personally identifiable information controls.
+\item Secure deletion workflows.
+\end{itemize}
+
+\subsection{Webhook Security}
+
+Webhook delivery should support:
+
+\begin{itemize}
+\item HMAC signatures.
+\item Timestamped requests.
+\item Replay-attack protection.
+\item Secret rotation.
+\item IP allowlists.
+\item Mutual TLS for enterprise customers.
+\item Idempotency keys.
+\item Retry and dead-letter policies.
+\item Delivery logs.
+\end{itemize}
+
+\subsection{Prompt and Model Security}
+
+The system must protect against:
+
+\begin{itemize}
+\item Prompt injection in spoken content.
+\item Attempts to override workflow constraints.
+\item Unauthorized workflow selection.
+\item Data exfiltration through model responses.
+\item Cross-tenant context leakage.
+\item Malicious entity names or external content.
+\end{itemize}
+
+The model should receive only:
+
+\begin{itemize}
+\item The workflows allowed for the current user.
+\item The minimum required tenant terminology.
+\item The current transcript window.
+\item The current structured draft.
+\item Explicit system-controlled output constraints.
+\end{itemize}
+
+% =========================================================
+\section{Auditability and Compliance}
+
+Every session should produce a complete audit record containing:
+
+\begin{itemize}
+\item Tenant ID.
+\item User ID.
+\item Device ID.
+\item Session timestamps.
+\item Workflow definition and version.
+\item Transcript revisions.
+\item Draft revisions.
+\item Model and prompt versions.
+\item Validation results.
+\item Confirmation evidence.
+\item Approval decisions.
+\item Final payload.
+\item Integration-delivery attempts.
+\item Final execution outcome.
+\end{itemize}
+
+Audio storage must be configurable per tenant:
+
+\begin{itemize}
+\item Do not store.
+\item Store temporarily.
+\item Store only failed sessions.
+\item Store with explicit employee consent.
+\item Store according to customer-defined retention periods.
+\end{itemize}
+
+% =========================================================
+\section{Scalability and Availability}
+
+\subsection{Independent Scaling Units}
+
+The following components should scale independently:
+
+\begin{itemize}
+\item Realtime Gateway: concurrent connections.
+\item Speech Workers: concurrent audio streams.
+\item Workflow Runtime: extraction and reasoning requests.
+\item Validation Workers: database and external lookups.
+\item Webhook Workers: delivery throughput.
+\item Audit Pipeline: event-ingestion volume.
+\end{itemize}
+
+\subsection{Hot and Durable State}
+
+\begin{tabularx}{\textwidth}{L{35mm}Y Y}
+\toprule
+\textbf{Storage} & \textbf{Purpose} & \textbf{Examples} \
+\midrule
+Redis
+& Short-lived realtime state
+& Session state, connection routing, rate limits \
+
+PostgreSQL
+& Durable relational state
+& Tenants, workflows, sessions, approvals, audit metadata \
+
+Object storage
+& Large binary objects
+& Audio, attachments, exported audit packages \
+
+Event queue
+& Durable asynchronous processing
+& Webhook jobs, analytics, quality evaluation \
+\bottomrule
+\end{tabularx}
+
+\subsection{Failure Handling}
+
+The architecture should support:
+
+\begin{itemize}
+\item Realtime reconnection using session resume tokens.
+\item Audio sequence-number verification.
+\item Duplicate chunk detection.
+\item Idempotent finalization.
+\item At-least-once asynchronous delivery.
+\item Idempotency keys for downstream execution.
+\item Dead-letter queues.
+\item Controlled retry with exponential backoff.
+\item Circuit breakers for external dependencies.
+\end{itemize}
+
+% =========================================================
+\section{Suggested Data Model}
+
+\begin{longtable}{L{38mm}L{46mm}L{76mm}}
+\toprule
+\textbf{Entity} & \textbf{Purpose} & \textbf{Important Fields} \
+\midrule
+\endhead
+
+Tenant
+& Customer organization
+& ID, name, plan, region, security policy \
+
+User
+& Human platform user
+& Tenant, identity provider, roles, status \
+
+Device
+& Registered client device
+& User, fingerprint, status, last seen \
+
+WorkflowDefinition
+& Logical workflow
+& Tenant, key, name, current published version \
+
+WorkflowVersion
+& Immutable workflow version
+& Schema, rules, examples, execution policy \
+
+TerminologyEntry
+& Tenant vocabulary
+& Phrase, normalized value, entity type \
+
+IntegrationDestination
+& External action destination
+& Type, endpoint, secret reference, status \
+
+VoiceSession
+& Realtime interaction
+& User, workflow candidate, status, timestamps \
+
+TranscriptRevision
+& Transcript history
+& Session, revision, text, stability, confidence \
+
+WorkflowDraftRevision
+& Structured draft history
+& Session, revision, payload, missing fields \
+
+ValidationResult
+& Validation outcome
+& Session, rule, severity, field path \
+
+Confirmation
+& User confirmation evidence
+& User, method, timestamp, device \
+
+Approval
+& Supervisor decision
+& Approver, status, reason, timestamp \
+
+ExecutionAttempt
+& Delivery or execution attempt
+& Destination, attempt number, response, status \
+
+AuditEvent
+& Immutable operational audit
+& Actor, action, target, timestamp, metadata \
+\bottomrule
+\end{longtable}
+
+% =========================================================
+\section{API Surface}
+
+\subsection{Management APIs}
+
+\begin{itemize}
+\item \texttt{POST /v1/workflows}
+\item \texttt{GET /v1/workflows}
+\item \texttt{GET /v1/workflows/{workflowId}}
+\item \texttt{POST /v1/workflows/{workflowId}/versions}
+\item \texttt{POST /v1/workflows/{workflowId}/publish}
+\item \texttt{POST /v1/workflows/{workflowId}/test}
+\item \texttt{POST /v1/integrations}
+\item \texttt{POST /v1/terminology}
+\item \texttt{GET /v1/quality/sessions}
+\end{itemize}
+
+\subsection{Realtime APIs}
+
+\begin{itemize}
+\item \texttt{POST /v1/realtime/sessions}
+\item \texttt{GET /v1/realtime/sessions/{sessionId}}
+\item \texttt{POST /v1/realtime/sessions/{sessionId}/finalize}
+\item \texttt{POST /v1/realtime/sessions/{sessionId}/confirm}
+\item \texttt{POST /v1/realtime/sessions/{sessionId}/cancel}
+\item \texttt{WSS /v1/realtime/sessions/{sessionId}/stream}
+\end{itemize}
+
+\subsection{Approval APIs}
+
+\begin{itemize}
+\item \texttt{GET /v1/approvals}
+\item \texttt{POST /v1/approvals/{approvalId}/approve}
+\item \texttt{POST /v1/approvals/{approvalId}/reject}
+\end{itemize}
+
+\subsection{Webhook Event Types}
+
+\begin{itemize}
+\item \texttt{voice.session.started}
+\item \texttt{voice.session.completed}
+\item \texttt{workflow.draft.ready}
+\item \texttt{workflow.confirmed}
+\item \texttt{workflow.approval.requested}
+\item \texttt{workflow.approved}
+\item \texttt{workflow.rejected}
+\item \texttt{workflow.execution.succeeded}
+\item \texttt{workflow.execution.failed}
+\end{itemize}
+
+% =========================================================
+\section{Enterprise Dashboard}
+
+The dashboard should include the following modules.
+
+\subsection{Overview}
+
+\begin{itemize}
+\item Active sessions.
+\item Completed workflows.
+\item Failed workflows.
+\item Average end-to-end latency.
+\item Extraction accuracy.
+\item Confirmation rate.
+\item Approval backlog.
+\item Integration-delivery health.
+\end{itemize}
+
+\subsection{Workflow Builder}
+
+\begin{itemize}
+\item Workflow details.
+\item Visual JSON Schema builder.
+\item Advanced JSON editor.
+\item Trigger phrases.
+\item Example utterances.
+\item Business terminology.
+\item Validation rules.
+\item Execution policy.
+\item Integration target.
+\item Version history.
+\end{itemize}
+
+\subsection{Voice Playground}
+
+The Voice Playground should allow an administrator to:
+
+\begin{itemize}
+\item Record or upload voice.
+\item View partial transcripts.
+\item Inspect workflow candidates.
+\item Inspect extracted fields and confidence.
+\item Test corrections.
+\item Review missing-field questions.
+\item View validation results.
+\item Compare expected and actual JSON.
+\item Save examples to the evaluation dataset.
+\end{itemize}
+
+\subsection{Quality Center}
+
+The Quality Center should provide:
+
+\begin{itemize}
+\item Failed-session review.
+\item Low-confidence sessions.
+\item Frequently corrected fields.
+\item Workflow confusion matrix.
+\item Terminology gaps.
+\item Model-version comparison.
+\item Regression-evaluation reports.
+\end{itemize}
+
+\subsection{Integrations}
+
+\begin{itemize}
+\item Webhook destinations.
+\item API connectors.
+\item n8n templates.
+\item Secret rotation.
+\item Delivery logs.
+\item Replay controls.
+\item Test-event delivery.
+\end{itemize}
+
+% =========================================================
+\section{Observability}
+
+\subsection{Technical Metrics}
+
+The platform should monitor:
+
+\begin{itemize}
+\item Active realtime connections.
+\item Audio-stream duration.
+\item Speech-service latency.
+\item Partial transcript latency.
+\item Workflow extraction latency.
+\item Validation latency.
+\item Model token usage.
+\item Queue depth.
+\item Webhook success rate.
+\item Database and Redis performance.
+\end{itemize}
+
+\subsection{Product Quality Metrics}
+
+\begin{itemize}
+\item Workflow classification accuracy.
+\item Field extraction precision.
+\item Field extraction recall.
+\item Correction frequency.
+\item Missing-field frequency.
+\item User confirmation rate.
+\item User cancellation rate.
+\item Manual-edit rate.
+\item Successful execution rate.
+\end{itemize}
+
+\subsection{Tracing}
+
+Each session should have a distributed trace ID propagated through:
+
+\begin{itemize}
+\item Client.
+\item Realtime Gateway.
+\item Speech Service.
+\item Workflow Runtime.
+\item Validation Service.
+\item Dispatcher.
+\item Webhook Worker.
+\end{itemize}
+
+% =========================================================
+\section{Deployment Topology}
+
+A production deployment may use:
+
+\begin{itemize}
+\item Kubernetes or another container orchestration platform.
+\item Regional realtime gateways.
+\item Dedicated speech-worker pools.
+\item Autoscaled workflow-runtime workers.
+\item Managed PostgreSQL with high availability.
+\item Redis with replication or clustering.
+\item Durable event streaming or queues.
+\item S3-compatible object storage.
+\item Centralized secrets management.
+\item OpenTelemetry-compatible observability.
+\end{itemize}
+
+Enterprise deployment options may include:
+
+\begin{itemize}
+\item Multi-tenant managed cloud.
+\item Dedicated tenant environment.
+\item Private cloud.
+\item Customer-controlled self-hosted deployment.
+\item Hybrid edge and cloud deployment.
+\end{itemize}
+
+% =========================================================
+\section{MVP Scope}
+
+\subsection{Included in the MVP}
+
+The first commercially testable version should include:
+
+\begin{itemize}
+\item Multi-tenant organization management.
+\item User authentication and role-based access.
+\item Workflow creation.
+\item JSON Schema configuration.
+\item Workflow examples and terminology.
+\item Four initial workflow types:
+purchase, sale, income, and expense.
+\item Arabic and Egyptian Arabic streaming transcription.
+\item WebSocket realtime sessions.
+\item Incremental workflow drafts.
+\item Missing-field detection.
+\item Deterministic validation.
+\item User confirmation.
+\item Signed webhook delivery.
+\item n8n-compatible webhook templates.
+\item Session and delivery audit logs.
+\item Voice testing playground.
+\item Basic quality and latency dashboard.
+\end{itemize}
+
+\subsection{Excluded from the MVP}
+
+The following should be postponed unless required by a paying pilot
+customer:
+
+\begin{itemize}
+\item Full offline speech recognition.
+\item Customer-specific model fine-tuning.
+\item On-premise installation.
+\item Advanced visual rule engine.
+\item Multi-step workflow orchestration.
+\item Marketplace of public workflow templates.
+\item Automated financial posting.
+\item Autonomous execution of high-risk actions.
+\end{itemize}
+
+% =========================================================
+\section{Delivery Roadmap}
+
+\begin{tabularx}{\textwidth}{L{28mm}Y Y}
+\toprule
+\textbf{Phase} & \textbf{Objectives} & \textbf{Main Deliverables} \
+\midrule
+Phase 0:
+Validation
+&
+Confirm customer problem and technical feasibility.
+&
+Pilot workflows, voice samples, latency benchmark, security assumptions. \
+
+Phase 1:
+Foundation
+&
+Build tenant, IAM, workflow configuration, and schema versioning.
+&
+Management APIs, dashboard foundation, PostgreSQL model. \
+
+Phase 2:
+Realtime Runtime
+&
+Build secure streaming voice sessions.
+&
+Realtime Gateway, speech integration, Redis session state. \
+
+Phase 3:
+Structured Extraction
+&
+Convert partial transcripts into workflow drafts.
+&
+Workflow classification, field extraction, correction handling. \
+
+Phase 4:
+Validation
+&
+Add deterministic business validation and entity resolution.
+&
+Validation engine, lookup connectors, missing-field handling. \
+
+Phase 5:
+Execution
+&
+Safely deliver confirmed workflows.
+&
+Webhook dispatcher, retries, signatures, n8n templates. \
+
+Phase 6:
+Enterprise Readiness
+&
+Improve auditability, quality, scale, and security.
+&
+Quality center, tracing, retention policies, load tests. \
+\bottomrule
+\end{tabularx}
+
+% =========================================================
+\section{Team Responsibilities}
+
+\begin{tabularx}{\textwidth}{L{42mm}Y}
+\toprule
+\textbf{Team or Role} & \textbf{Responsibilities} \
+\midrule
+Product Management
+& Customer discovery, workflow priorities, pricing, acceptance criteria. \
+
+Backend Engineering
+& APIs, tenancy, workflow runtime, validation, integrations, persistence. \
+
+Realtime Engineering
+& WebSocket/WebRTC gateway, audio streaming, session recovery, latency. \
+
+AI and ML Engineering
+& Speech models, extraction strategy, evaluation, model routing. \
+
+Frontend Engineering
+& Enterprise dashboard, schema builder, voice playground, session UI. \
+
+Security Engineering
+& Threat modeling, IAM, tenant isolation, keys, audit, compliance. \
+
+DevOps and SRE
+& Deployment, autoscaling, observability, reliability, incident response. \
+
+QA Engineering
+& Functional tests, realtime tests, regression datasets, load tests. \
+
+Domain Experts
+& Business rules, terminology, workflow examples, validation review. \
+\bottomrule
+\end{tabularx}
+
+% =========================================================
+\section{Testing Strategy}
+
+\subsection{Functional Testing}
+
+\begin{itemize}
+\item Workflow configuration.
+\item Schema validation.
+\item Workflow version publishing.
+\item Permission enforcement.
+\item Session creation and completion.
+\item Confirmation and approval.
+\item Webhook delivery and replay.
+\end{itemize}
+
+\subsection{Voice and AI Evaluation}
+
+The evaluation dataset should include:
+
+\begin{itemize}
+\item Egyptian Arabic accents.
+\item Background noise.
+\item Slow and fast speakers.
+\item Corrections.
+\item Multiple line items.
+\item Similar customer and product names.
+\item Mixed Arabic and English terminology.
+\item Spoken numbers and monetary amounts.
+\item Incomplete statements.
+\item Ambiguous workflows.
+\end{itemize}
+
+\subsection{Performance Testing}
+
+Performance testing should cover:
+
+\begin{itemize}
+\item Concurrent WebSocket sessions.
+\item Long-running audio streams.
+\item Reconnection storms.
+\item Speech-worker saturation.
+\item Model-provider throttling.
+\item Redis failover.
+\item Queue backlog.
+\item Webhook destination failures.
+\end{itemize}
+
+\subsection{Security Testing}
+
+\begin{itemize}
+\item Cross-tenant access attempts.
+\item Token theft and replay.
+\item Prompt-injection attempts.
+\item Webhook forgery.
+\item Secret leakage.
+\item Malicious audio and payload sizes.
+\item Permission bypass attempts.
+\item Sensitive-data logging.
+\end{itemize}
+
+% =========================================================
+\section{MVP Acceptance Criteria}
+
+The MVP may be considered ready for a controlled customer pilot when:
+
+\begin{enumerate}
+\item An enterprise administrator can define and publish a workflow
+without modifying backend code.
+
+\item The administrator can provide a JSON Schema, examples,
+terminology, and validation rules.
+
+\item An authenticated employee can start a realtime voice session.
+
+\item Partial transcript updates are displayed while the employee speaks.
+
+\item The system incrementally identifies one of the configured workflows.
+
+\item The system produces a structured draft matching the published schema.
+
+\item Spoken corrections update the existing draft instead of creating
+duplicate actions.
+
+\item Missing required fields are identified and requested.
+
+\item Deterministic validation prevents invalid final actions.
+
+\item High-risk workflows cannot execute without their configured
+confirmation or approval.
+
+\item Confirmed workflows are delivered through signed, idempotent
+webhooks.
+
+\item Failed webhook deliveries are retried and visible in the dashboard.
+
+\item Every final action is traceable through an immutable audit record.
+
+\item Tenant data cannot be accessed by another tenant.
+
+\item The realtime system satisfies the agreed pilot latency and
+concurrency targets.
+\end{enumerate}
+
+% =========================================================
+\section{Primary Risks and Mitigations}
+
+\begin{longtable}{L{45mm}L{61mm}L{55mm}}
+\toprule
+\textbf{Risk} & \textbf{Impact} & \textbf{Mitigation} \
+\midrule
+\endhead
+
+Poor dialect recognition
+& Incorrect transcript and extraction
+& Tenant terminology, evaluation datasets, model routing, confirmations \
+
+High model latency
+& Unresponsive experience
+& Fast extraction layer, semantic checkpoints, caching, regional workers \
+
+Incorrect action execution
+& Financial or operational damage
+& Draft-only processing, deterministic validation, confirmation, approval \
+
+Cross-tenant leakage
+& Critical security breach
+& Strict tenant context, row-level enforcement, isolated keys and logs \
+
+Prompt injection
+& Invalid or unauthorized model behavior
+& Constrained outputs, limited context, independent authorization \
+
+External integration failure
+& Lost or duplicate actions
+& Idempotency, retries, dead-letter queues, delivery logs \
+
+Cost growth
+& Unsustainable margins
+& Model routing, audio limits, batching, per-tenant quotas, usage pricing \
+
+Workflow complexity
+& Difficult enterprise onboarding
+& Visual builder, templates, guided testing, professional services \
+
+Noisy environments
+& Poor speech quality
+& Voice activity detection, noise handling, client microphone guidance \
+
+User distrust
+& Low adoption
+& Live draft preview, explainable corrections, final confirmation \
+\bottomrule
+\end{longtable}
+
+% =========================================================
+\section{Commercial Model}
+
+A hybrid commercial model is recommended.
+
+\subsection{Platform Subscription}
+
+The subscription may be based on:
+
+\begin{itemize}
+\item Number of active users.
+\item Number of voice minutes.
+\item Number of completed workflows.
+\item Number of published workflow definitions.
+\item Data-retention requirements.
+\item Deployment model.
+\end{itemize}
+
+\subsection{Usage Charges}
+
+Usage charges may cover:
+
+\begin{itemize}
+\item Streaming speech minutes.
+\item Structured-model processing.
+\item Webhook events.
+\item Stored audio.
+\item Premium entity-resolution connectors.
+\end{itemize}
+
+\subsection{Enterprise Services}
+
+Additional revenue may come from:
+
+\begin{itemize}
+\item Workflow design.
+\item Integration implementation.
+\item Custom deployment.
+\item Security review.
+\item Domain-specific terminology preparation.
+\item Evaluation-dataset preparation.
+\item Service-level agreements.
+\end{itemize}
+
+% =========================================================
+\section{Recommended Initial Pilot}
+
+The first pilot should focus on one operational customer and four
+high-frequency workflows:
+
+\begin{enumerate}
+\item Purchase
+\item Sale
+\item Income or receipt
+\item Expense or payment
+\end{enumerate}
+
+The pilot should avoid direct irreversible accounting posting.
+
+The initial integration should create a validated transaction draft or
+send a signed webhook to the customer's backend. The customer's system
+remains the final system of record.
+
+This approach reduces risk while proving:
+
+\begin{itemize}
+\item Real-time usability.
+\item Arabic speech quality.
+\item Workflow configurability.
+\item Integration value.
+\item Operational time savings.
+\item Customer willingness to pay.
+\end{itemize}
+
+% =========================================================
+\section{Final Recommendation}
+
+The project should be developed as a secure, multi-tenant,
+configuration-driven runtime rather than as a collection of hard-coded
+voice commands.
+
+The architecture should preserve a strict separation between:
+
+\begin{itemize}
+\item Speech recognition.
+\item AI-based extraction.
+\item Deterministic validation.
+\item Authorization.
+\item Confirmation and approval.
+\item Final execution.
+\end{itemize}
+
+The first product milestone should prove one complete vertical flow:
+
+\begin{center}
+\textbf{
+Tenant Workflow Definition
+$\rightarrow$
+Realtime Voice Session
+$\rightarrow$
+Structured Draft
+$\rightarrow$
+Validation
+$\rightarrow$
+User Confirmation
+$\rightarrow$
+Signed Webhook
+}
+\end{center}
+
+Once this flow is stable, measurable, and secure, the platform can expand
+into additional industries, languages, deployment models, and workflow
+types.
+
+% =========================================================
+\appendix
+
+\section{Decision Summary}
+
+\begin{tabularx}{\textwidth}{L{53mm}Y}
+\toprule
+\textbf{Decision} & \textbf{Selected Direction} \
+\midrule
+Primary product category
+& Enterprise realtime voice workflow infrastructure \
+
+Customization model
+& Tenant-defined schemas, examples, terminology, and rules \
+
+Realtime transport
+& WebSocket initially; WebRTC where audio requirements justify it \
+
+Execution model
+& Streaming draft, final confirmed execution \
+
+State model
+& Redis for hot state, PostgreSQL for durable state \
+
+Integration model
+& Signed webhooks, REST APIs, queues, and n8n \
+
+AI role
+& Classification and extraction, not authorization or final validation \
+
+MVP workflows
+& Purchase, sale, income, and expense \
+
+Initial delivery risk
+& Create validated drafts or webhooks, not direct financial posting \
+
+Security model
+& Tenant isolation, RBAC, audit, encryption, signed delivery \
+\bottomrule
+\end{tabularx}
+
+\section{Glossary}
+
+\begin{description}[style=nextline,leftmargin=35mm]
+\item[Tenant]
+A customer organization isolated within the platform.
+
+\item[Workflow Definition]
+A versioned configuration describing a business operation and its
+structured data.
+
+\item[Workflow Draft]
+The mutable structured result produced while the employee is speaking.
+
+\item[Voice Session]
+A realtime interaction containing audio, transcripts, drafts,
+validations, and execution state.
+
+\item[Entity Resolution]
+Mapping spoken names to valid customer, supplier, product, account, or
+other business identifiers.
+
+\item[Execution Policy]
+Rules controlling confirmation, authentication, approval, and final
+action execution.
+
+\item[Semantic Checkpoint]
+A meaningful point at which the reasoning model updates the structured
+workflow draft.
+
+\item[System of Record]
+The authoritative customer application that owns the final business
+transaction.
+\end{description}
+
+\end{document}
