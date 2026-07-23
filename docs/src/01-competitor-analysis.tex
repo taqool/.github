@@ -1,0 +1,675 @@
+\documentclass[10.5pt,a4paper]{article}
+
+% =========================================================
+% Compiler: XeLaTeX
+% Run three times to resolve the table of contents and page count:
+%   xelatex taqool-competitor-analysis-xelatex.tex
+%   xelatex taqool-competitor-analysis-xelatex.tex
+%   xelatex taqool-competitor-analysis-xelatex.tex
+% =========================================================
+
+\usepackage[a4paper,margin=18mm,headheight=15pt]{geometry}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[most]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{ragged2e}
+
+% ---------------------------------------------------------
+% Languages and fonts
+% ---------------------------------------------------------
+\setdefaultlanguage{english}
+\setotherlanguage{arabic}
+
+\IfFontExistsTF{DejaVu Serif}{
+  \setmainfont{DejaVu Serif}
+}{
+  \IfFontExistsTF{Liberation Serif}{
+    \setmainfont{Liberation Serif}
+  }{
+    \setmainfont{Times New Roman}
+  }
+}
+
+\IfFontExistsTF{DejaVu Sans}{
+  \setsansfont{DejaVu Sans}
+}{
+  \IfFontExistsTF{Liberation Sans}{
+    \setsansfont{Liberation Sans}
+  }{
+    \setsansfont{Arial}
+  }
+}
+
+\IfFontExistsTF{DejaVu Sans Mono}{
+  \setmonofont{DejaVu Sans Mono}
+}{
+  \IfFontExistsTF{Liberation Mono}{
+    \setmonofont{Liberation Mono}
+  }{
+    \setmonofont{Courier New}
+  }
+}
+
+\IfFontExistsTF{Noto Sans Arabic}{
+  \newfontfamily\arabicfont[Script=Arabic,Scale=1.05]{Noto Sans Arabic}
+}{
+  \IfFontExistsTF{IBM Plex Sans Arabic}{
+    \newfontfamily\arabicfont[Script=Arabic,Scale=1.05]{IBM Plex Sans Arabic}
+  }{
+    \IfFontExistsTF{Amiri}{
+      \newfontfamily\arabicfont[Script=Arabic,Scale=1.05]{Amiri}
+    }{
+      \newfontfamily\arabicfont[Script=Arabic,Scale=1.05]{Arial}
+    }
+  }
+}
+
+% ---------------------------------------------------------
+% Document metadata
+% ---------------------------------------------------------
+\newcommand{\BrandName}{Taqool}
+\newcommand{\DocumentTitle}{Competitor Analysis and Competitive Advantages}
+\newcommand{\VerificationDate}{24 July 2026}
+\newcommand{\DocumentVersion}{1.0}
+
+% ---------------------------------------------------------
+% Colors
+% ---------------------------------------------------------
+\definecolor{Primary}{HTML}{17324D}
+\definecolor{Secondary}{HTML}{2D6A6A}
+\definecolor{Accent}{HTML}{B88927}
+\definecolor{Surface}{HTML}{F5F7F9}
+\definecolor{Border}{HTML}{D7DEE5}
+\definecolor{TextDark}{HTML}{17212B}
+\definecolor{TextMuted}{HTML}{5F6B76}
+\definecolor{Danger}{HTML}{9A3D3D}
+\definecolor{Success}{HTML}{2E7D5B}
+
+% ---------------------------------------------------------
+% Hyperlinks
+% ---------------------------------------------------------
+\hypersetup{
+  pdftitle={Taqool Competitor Analysis},
+  pdfauthor={Taqool Project Team},
+  colorlinks=true,
+  linkcolor=Primary,
+  urlcolor=Secondary,
+  citecolor=Primary
+}
+
+% ---------------------------------------------------------
+% Header and footer
+% ---------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\sffamily\small \BrandName{} --- Competitive Intelligence}
+\fancyhead[R]{\sffamily\small Version \DocumentVersion}
+\fancyfoot[L]{\sffamily\footnotesize Confidential --- Internal Use}
+\fancyfoot[R]{\sffamily\footnotesize Page \thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ---------------------------------------------------------
+% Section styling
+% ---------------------------------------------------------
+\titleformat{\section}
+  {\Large\sffamily\bfseries\color{Primary}}
+  {\thesection}{0.7em}{}
+\titleformat{\subsection}
+  {\large\sffamily\bfseries\color{Secondary}}
+  {\thesubsection}{0.7em}{}
+\titlespacing*{\section}{0pt}{19pt}{8pt}
+\titlespacing*{\subsection}{0pt}{14pt}{6pt}
+
+% ---------------------------------------------------------
+% Tables and lists
+% ---------------------------------------------------------
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\renewcommand{\arraystretch}{1.22}
+\setlength{\tabcolsep}{3pt}
+\setlist[itemize]{leftmargin=1.5em,itemsep=2.5pt,topsep=4pt}
+\setlist[enumerate]{leftmargin=1.7em,itemsep=2.5pt,topsep=4pt}
+
+% ---------------------------------------------------------
+% Boxes
+% ---------------------------------------------------------
+\newtcolorbox{summarybox}{
+  enhanced,
+  breakable,
+  colback=Surface,
+  colframe=Primary,
+  boxrule=0.7pt,
+  arc=2mm,
+  left=4mm,right=4mm,top=3mm,bottom=3mm
+}
+
+\newtcolorbox{positionbox}{
+  enhanced,
+  breakable,
+  colback=Secondary!6,
+  colframe=Secondary,
+  boxrule=0.7pt,
+  arc=2mm,
+  left=4mm,right=4mm,top=3mm,bottom=3mm
+}
+
+% ---------------------------------------------------------
+% Code blocks
+% ---------------------------------------------------------
+\lstdefinestyle{taqoolcode}{
+  backgroundcolor=\color{Surface},
+  basicstyle=\ttfamily\footnotesize,
+  frame=single,
+  rulecolor=\color{Border},
+  breaklines=true,
+  showstringspaces=false,
+  columns=fullflexible,
+  xleftmargin=3pt,
+  xrightmargin=3pt
+}
+\lstset{style=taqoolcode}
+
+\begin{document}
+
+% =========================================================
+% Title page
+% =========================================================
+\begin{titlepage}
+  \thispagestyle{empty}
+  \vspace*{18mm}
+
+  {\sffamily\Large\color{Secondary} MARKET AND PRODUCT STRATEGY}
+
+  \vspace{8mm}
+
+  {\sffamily\bfseries\fontsize{28}{34}\selectfont\color{Primary}
+    \BrandName{} --- \DocumentTitle
+  }
+
+  \vspace{4mm}
+
+  {\Large\color{TextMuted}
+    \textarabic{تحليل المنافسين والميزات التنافسية المقترحة}
+  }
+
+  \vspace{14mm}
+
+  \begin{summarybox}
+    \begin{tabularx}{\textwidth}{L{38mm}Y}
+      \textbf{Product category} & Enterprise Real-Time Voice-to-Workflow Runtime \\
+      \textbf{Positioning} & Converts live employee speech into tenant-defined, validated, auditable, and executable workflows. \\
+      \textbf{Last verified} & \VerificationDate \\
+      \textbf{Research basis} & Publicly available official product websites and documentation. \\
+      \textbf{Classification} & Confidential --- Internal Use \\
+    \end{tabularx}
+  \end{summarybox}
+
+  \vfill
+
+  \begin{center}
+    {\sffamily\small\color{TextMuted}
+      This document is a concise competitive assessment for product planning,
+      positioning, MVP prioritization, and team discussion.
+    }
+  \end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% =========================================================
+\section{Executive Summary}
+
+\begin{summarybox}
+The market contains strong voice-agent builders, Arabic speech platforms,
+and broad enterprise AI suites. However, the reviewed competitors are
+primarily organized around phone agents, conversational experiences,
+transcription, or general AI workflows.
+
+\medskip
+
+\BrandName{} should own a narrower and more defensible category:
+
+\begin{center}
+\textbf{Employee speech $\rightarrow$ incremental structured draft
+$\rightarrow$ entity resolution $\rightarrow$ deterministic validation
+$\rightarrow$ controlled execution}
+\end{center}
+
+The most significant strategic threats are \textbf{Vapi},
+\textbf{ElevenLabs}, \textbf{Voiceflow}, and \textbf{Arabic.AI}.
+\textbf{Hamsa}, \textbf{Munsit}, and \textbf{Deepgram} are also important
+because they may act as competitors, suppliers, or both.
+\end{summarybox}
+
+% =========================================================
+\section{Competitor Landscape}
+
+The market can be divided into three main groups:
+
+\begin{enumerate}
+  \item \textbf{Voice-agent platforms:} build and operate inbound or outbound
+  conversational agents, commonly through telephony.
+
+  \item \textbf{Arabic speech platforms:} provide Arabic speech-to-text,
+  text-to-speech, dialect support, and voice-agent infrastructure.
+
+  \item \textbf{Enterprise AI suites:} provide agents, workflows, governance,
+  and language capabilities across several business functions.
+\end{enumerate}
+
+No reviewed competitor is positioned primarily around the full
+\BrandName{} operating model. Several can reproduce individual components,
+so differentiation must come from the integrated operational runtime rather
+than raw speech recognition.
+
+% =========================================================
+\section{Competitor Matrix}
+
+\small
+\begin{longtable}{L{25mm}L{27mm}L{48mm}L{51mm}L{16mm}}
+\toprule
+\textbf{Competitor} & \textbf{Category} & \textbf{Current focus and strengths} & \textbf{Gap relative to \BrandName} & \textbf{Threat} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Competitor} & \textbf{Category} & \textbf{Current focus and strengths} & \textbf{Gap relative to \BrandName} & \textbf{Threat} \\
+\midrule
+\endhead
+
+\href{https://vapi.ai/}{Vapi}
+& Developer voice-agent platform
+& Infrastructure for building, testing, and deploying conversational voice agents, including telephony, tools, integrations, and configurable flows.
+& Primarily agent- and call-centric rather than an employee operational transaction runtime with schema governance and deterministic validation.
+& \textbf{Very High} \\
+\midrule
+
+\href{https://www.voiceflow.com/}{Voiceflow}
+& Visual conversational-agent builder
+& Strong visual workflows, playbooks, knowledge, tools, collaboration, testing, and enterprise agent management.
+& Broad conversational-design platform; structured operational transaction capture is not the primary product object.
+& \textbf{High} \\
+\midrule
+
+\href{https://elevenlabs.io/voice-agents}{ElevenLabs ElevenAgents}
+& Voice-agent and speech platform
+& Realtime agents, graph workflows, tools, APIs, SDKs, monitoring, and high-quality voice technology.
+& Optimized for conversational agents and voice experiences rather than governed employee-to-ERP workflow creation.
+& \textbf{Very High} \\
+\midrule
+
+\href{https://www.retellai.com/}{Retell AI}
+& AI phone-agent platform
+& Production phone agents, low-latency orchestration, function calling, testing, monitoring, and call operations.
+& Strongly phone and contact-center oriented; less specialized in embedded field operations and tenant-defined transaction schemas.
+& \textbf{High} \\
+\midrule
+
+\href{https://www.bland.ai/}{Bland AI}
+& Enterprise voice and messaging agents
+& Inbound and outbound automation across voice and messaging, telephony, infrastructure, and contact-center use cases.
+& Focuses on automated customer conversations rather than employee-generated operational records and approval-controlled execution.
+& \textbf{Medium--High} \\
+\midrule
+
+\href{https://developers.deepgram.com/docs/build-a-voice-agent}{Deepgram}
+& Speech and voice-agent infrastructure
+& Realtime speech APIs and voice-agent infrastructure using streaming connections.
+& Lower-level provider; does not replace workflow configuration, validation, permissions, entity resolution, and auditability.
+& \textbf{Supplier / Medium} \\
+\midrule
+
+\href{https://tryhamsa.com/}{Hamsa}
+& Arabic voice AI platform
+& Arabic-focused STT, TTS, spoken-language understanding, voice agents, realtime APIs, and dialect support.
+& Strong Arabic speech layer, but not primarily an operational workflow governance and secure-execution product.
+& \textbf{High in MENA} \\
+\midrule
+
+\href{https://munsit.com/enterprise}{Munsit}
+& Arabic speech platform
+& Enterprise Arabic speech recognition and synthesis, dialect coverage, and enterprise or government deployment positioning.
+& Primarily speech infrastructure rather than a schema-first operational workflow runtime.
+& \textbf{Medium--High} \\
+\midrule
+
+\href{https://arabic.ai/}{Arabic.AI}
+& Arabic-first enterprise AI suite
+& Arabic enterprise AI layer spanning assistants, speech, OCR, agentic workflows, governance, and deployment options.
+& Broader platform; \BrandName{} must be more specialized, faster to deploy, and deeper in realtime operational transactions.
+& \textbf{Very High in MENA} \\
+\midrule
+
+\href{https://maqsam.com/}{Maqsam}
+& Arabic contact-center AI
+& Arabic-focused customer-service software and AI agents for support, sales, and contact-center operations.
+& Primarily customer interaction software rather than embedded employee workflow capture.
+& \textbf{Medium} \\
+\midrule
+
+\href{https://dello.ai/}{Dello AI}
+& Arabic-first voice agents
+& GCC-oriented Arabic voice AI for customer-facing teams.
+& Customer-conversation positioning; public technical depth is less visible than larger competitors.
+& \textbf{Watch} \\
+\midrule
+
+\href{https://voysera.ai/}{Voysera}
+& Regional enterprise voice agents
+& Enterprise AI voice agents targeting Saudi Arabia, Bahrain, and the wider Middle East.
+& Regional voice-agent positioning rather than schema-controlled internal operations and developer infrastructure.
+& \textbf{Watch} \\
+
+\bottomrule
+\end{longtable}
+\normalsize
+
+\subsection{Threat Interpretation}
+
+\begin{itemize}
+  \item \textbf{Very High:} can expand directly into \BrandName{}'s scope using existing technology and enterprise distribution.
+  \item \textbf{High:} strong overlap in voice workflows, Arabic, integrations, or enterprise deployment.
+  \item \textbf{Medium:} adjacent product with meaningful overlap but a different primary buyer or use case.
+  \item \textbf{Supplier:} more likely to power \BrandName{} than replace it, although upward expansion remains possible.
+  \item \textbf{Watch:} relevant regional company requiring ongoing monitoring.
+\end{itemize}
+
+% =========================================================
+\section{Competitive Positioning}
+
+\begin{tabularx}{\textwidth}{L{34mm}L{40mm}L{38mm}Y}
+\toprule
+\textbf{Market approach} & \textbf{Primary product object} & \textbf{Primary user} & \textbf{Typical output} \\
+\midrule
+Voice-agent platforms
+& AI agent or phone call
+& Customer or caller
+& Conversation outcome, tool call, appointment, or support resolution \\
+
+Arabic speech platforms
+& Audio stream or transcript
+& Developer or contact center
+& Transcript, synthesized voice, or speech intelligence \\
+
+Enterprise AI suites
+& Assistant or agent workflow
+& Knowledge worker or department
+& Answer, document, recommendation, or automated task \\
+
+\textbf{\BrandName}
+& \textbf{Versioned business workflow schema}
+& \textbf{Driver, warehouse worker, accountant, field employee, or operational team}
+& \textbf{Validated JSON transaction, approval request, webhook, or system action} \\
+\bottomrule
+\end{tabularx}
+
+\begin{positionbox}
+\textbf{Recommended category statement}
+
+\medskip
+
+\BrandName{} is a schema-driven realtime voice runtime for enterprise operations.
+
+\medskip
+
+\textbf{Recommended commercial statement}
+
+\medskip
+
+Define the business workflow once. Let employees speak naturally. Receive a validated and auditable transaction.
+\end{positionbox}
+
+% =========================================================
+\section{Proposed Competitive Advantages}
+
+\small
+\begin{longtable}{L{42mm}L{67mm}L{32mm}L{22mm}}
+\toprule
+\textbf{Competitive advantage} & \textbf{Customer value} & \textbf{Defensibility} & \textbf{MVP priority} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Competitive advantage} & \textbf{Customer value} & \textbf{Defensibility} & \textbf{MVP priority} \\
+\midrule
+\endhead
+
+\textbf{Schema-first workflow definitions}
+& Enterprises define the exact JSON structure required by their systems instead of accepting open-ended agent responses.
+& High with versioning, templates, and integrations.
+& \textbf{Critical} \\
+\midrule
+
+\textbf{Incremental structured drafts}
+& Users see fields update while speaking and can correct values naturally before execution.
+& High through realtime state, transcript revisions, and provenance.
+& \textbf{Critical} \\
+\midrule
+
+\textbf{Operational employee focus}
+& Designed for drivers, warehouse staff, accountants, field teams, and sales representatives rather than only callers.
+& Medium--High through vertical workflow depth and specialized UX.
+& \textbf{Critical} \\
+\midrule
+
+\textbf{Deterministic validation engine}
+& Blocks invalid financial and operational actions using JSON Schema, business rules, permissions, and database checks.
+& Very High because reliability becomes part of the platform.
+& \textbf{Critical} \\
+\midrule
+
+\textbf{Enterprise entity resolution}
+& Maps spoken names to real customers, suppliers, products, warehouses, vehicles, and accounts.
+& Very High as tenant-specific mappings and corrections accumulate.
+& \textbf{Critical} \\
+\midrule
+
+\textbf{Arabic operational-language intelligence}
+& Understands Egyptian and regional commercial vocabulary, measures, payments, corrections, and mixed Arabic-English speech.
+& High with proprietary terminology and evaluation datasets.
+& \textbf{Critical} \\
+\midrule
+
+\textbf{Risk-aware execution policies}
+& Supports confirmation, PIN, WebAuthn, supervisor approval, dual control, or draft-only execution.
+& High through deep IAM and audit integration.
+& \textbf{High} \\
+\midrule
+
+\textbf{Workflow and prompt versioning}
+& Keeps historical actions reproducible and auditable when schemas, rules, prompts, or models change.
+& High for enterprise and regulated customers.
+& \textbf{High} \\
+\midrule
+
+\textbf{Model-provider independence}
+& Allows routing across STT and LLM providers for Arabic quality, latency, privacy, availability, and cost.
+& Medium--High through provider abstraction and evaluation infrastructure.
+& \textbf{High} \\
+\midrule
+
+\textbf{Embedded SDK and API experience}
+& Existing ERP, logistics, warehouse, and mobile products can add voice workflows without becoming call-center systems.
+& High through SDK adoption and integration depth.
+& \textbf{High} \\
+\midrule
+
+\textbf{Secure webhooks and n8n integration}
+& Sends validated workflows with signatures, retries, idempotency, and delivery logs.
+& Medium; expected but essential for adoption.
+& \textbf{Critical} \\
+\midrule
+
+\textbf{Audit and field provenance}
+& Traces every field to transcript revisions, model outputs, user corrections, confirmations, and approvals.
+& Very High for financial and regulated operations.
+& \textbf{High} \\
+\midrule
+
+\textbf{Private and hybrid deployment path}
+& Supports dedicated cloud, VPC, on-premise, or hybrid processing for regulated customers.
+& High but infrastructure-intensive.
+& Later phase \\
+
+\bottomrule
+\end{longtable}
+\normalsize
+
+% =========================================================
+\section{Strategic Product Moat}
+
+The strongest defensibility comes from the combined system rather than
+from one model or feature:
+
+\begin{lstlisting}
+Tenant workflow schemas
++ Arabic operational terminology
++ Realtime transcript and draft revisions
++ Enterprise entity-resolution mappings
++ Deterministic business rules
++ Permission and approval policies
++ Correction and evaluation datasets
++ ERP and operational integrations
++ Immutable audit history
+\end{lstlisting}
+
+Speech recognition alone is not a durable moat. A generic LLM prompt is
+not a durable moat. A workflow dashboard alone is not a durable moat.
+
+The moat is the tenant-specific operational knowledge, correction data,
+workflow governance, and production integration accumulated through real use.
+
+% =========================================================
+\section{Where \BrandName{} Should Not Compete}
+
+The initial product should not compete directly on:
+
+\begin{itemize}
+  \item Generic AI phone receptionists.
+  \item Outbound sales calls.
+  \item General-purpose chatbot building.
+  \item Voice cloning or text-to-speech quality.
+  \item Raw speech-to-text pricing.
+  \item Broad knowledge assistants.
+  \item Full replacement of n8n, ERP, CRM, or contact-center platforms.
+\end{itemize}
+
+These markets are crowded and served by well-funded providers. Speech and
+language models should remain replaceable infrastructure while \BrandName{}
+owns the operational workflow, validation, security, and audit layers.
+
+% =========================================================
+\section{Recommended MVP Differentiation}
+
+The first release should prove one complete production-grade flow:
+
+\begin{lstlisting}
+Enterprise defines a workflow and JSON Schema
+-> Employee speaks in Egyptian Arabic
+-> Partial transcript appears in realtime
+-> Structured fields update incrementally
+-> Spoken corrections revise the same draft
+-> Entities resolve against enterprise data
+-> Deterministic rules validate the transaction
+-> User confirms the action
+-> Signed webhook is delivered
+-> Complete audit record is retained
+\end{lstlisting}
+
+\subsection{Initial Workflow Templates}
+
+\begin{enumerate}
+  \item Purchase
+  \item Sale
+  \item Expense / Payment
+  \item Income / Receipt
+\end{enumerate}
+
+\subsection{Initial Target Customers}
+
+\begin{itemize}
+  \item Distribution companies.
+  \item Agricultural trading businesses.
+  \item Logistics and delivery operators.
+  \item ERP and accounting software vendors.
+  \item Warehouse and field-service organizations.
+\end{itemize}
+
+% =========================================================
+\section{Competitive Conclusion}
+
+\BrandName{} is entering a competitive voice-AI market, but it should not
+present itself as another voice-agent builder.
+
+\begin{positionbox}
+\begin{center}
+\textbf{The trusted voice input layer for enterprise operational systems.}
+\end{center}
+\end{positionbox}
+
+The immediate strategic threats are \textbf{Vapi}, \textbf{ElevenLabs},
+\textbf{Voiceflow}, and \textbf{Arabic.AI}. The strongest Arabic speech
+competitors and potential suppliers are \textbf{Hamsa} and \textbf{Munsit}.
+Contact-center platforms are adjacent competitors but do not currently own
+the same operational use case.
+
+\BrandName{} must deliver measurably better performance in:
+
+\begin{itemize}
+  \item Structured-output reliability.
+  \item Arabic operational understanding.
+  \item Business-rule enforcement.
+  \item Enterprise entity resolution.
+  \item Auditability and field provenance.
+  \item Integration speed.
+  \item Enterprise security.
+  \item End-to-end latency.
+\end{itemize}
+
+% =========================================================
+\section{Official Competitor Links}
+
+\begin{tabularx}{\textwidth}{L{42mm}Y}
+\toprule
+\textbf{Competitor} & \textbf{Official link} \\
+\midrule
+Vapi & \url{https://vapi.ai/} \\
+Voiceflow & \url{https://www.voiceflow.com/} \\
+ElevenLabs ElevenAgents & \url{https://elevenlabs.io/voice-agents} \\
+Retell AI & \url{https://www.retellai.com/} \\
+Bland AI & \url{https://www.bland.ai/} \\
+Deepgram & \url{https://developers.deepgram.com/docs/build-a-voice-agent} \\
+Hamsa & \url{https://tryhamsa.com/} \\
+Munsit & \url{https://munsit.com/enterprise} \\
+Arabic.AI & \url{https://arabic.ai/} \\
+Maqsam & \url{https://maqsam.com/} \\
+Dello AI & \url{https://dello.ai/} \\
+Voysera & \url{https://voysera.ai/} \\
+\bottomrule
+\end{tabularx}
+
+% =========================================================
+\section*{Research Note}
+\addcontentsline{toc}{section}{Research Note}
+
+This document reflects publicly available official product information
+verified on \VerificationDate. Product capabilities, pricing, deployment
+options, and positioning may change. Performance claims, model quality,
+customer counts, and compliance certifications should be independently
+validated during procurement, partnership, or investment due diligence.
+
+\end{document}
